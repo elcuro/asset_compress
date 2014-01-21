@@ -137,6 +137,48 @@ class AssetScanner {
 	}
 
 /**
+ * Find all files in dirs recursive
+ *
+ * @param array $dir Dir to search files
+ * @param string $ext Extension of files to find
+ * @return array
+ */
+	public function findAll($dirs, $ext) {  
+        $files = array();
+        foreach ($dirs as $dir) {
+            $dir = $this->_normalizePath($dir, DS);        
+            $resolved = $this->resolve($dir);
+            if ($dir == $resolved) {
+                $dir = $this->webroot() . $dir;
+            } else {
+                $dir = $resolved;
+            }
+            $files = array_merge($files, $this->_findRecursive($dir, $ext));
+        }
+        return $files;
+    }
+    
+/**
+ * Find files recursive
+ *
+ * @param string $dir Dir to search files
+ * @param string $ext Extension of files to find
+ * @return array
+ */
+	protected function _findRecursive($dir, $ext) {
+        $files = array();
+        $Folder = new Folder($dir);
+        $paths = $Folder->findRecursive('.*\.' . $ext);
+        foreach($paths as $path) {
+            $file = basename($path);
+            if (!in_array($file, $files)) {
+                $files[] = $file;
+            }
+        }
+        return $files;
+    }
+
+/**
  * Resolve a plugin or theme path into the file path without the search paths.
  *
  * @param string $path Path to resolve
@@ -199,6 +241,18 @@ class AssetScanner {
 	public function paths() {
 		return $this->_paths;
 	}
+    
+/**
+ * Get webriit
+ *
+ * @return string
+ */
+	protected function webroot() {
+		if (isset($this->webroot)) {
+            return $this->webroot;
+        }
+        return WWW_ROOT;
+	}    
 
 /**
  * Checks if a string represents a remote file

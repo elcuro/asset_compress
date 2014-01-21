@@ -1,4 +1,5 @@
 <?php
+App::uses('AssetScanner', 'AssetCompress.Lib');
 /**
  * Parses the ini files AssetCompress uses into arrays that
  * other objects can use.
@@ -388,12 +389,31 @@ class AssetConfig {
 		$ext = $this->getExt($target);
 		if ($files === null) {
 			if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
+                if (isset($this->_data[$ext][self::TARGETS][$target]['dirs'])) {
+                    // attach dirs
+                    $dirs = $this->_data[$ext][self::TARGETS][$target]['dirs'];                    
+                    $files = $this->_data[$ext][self::TARGETS][$target]['files'];
+                    $this->_data[$ext][self::TARGETS][$target]['files'] = array_merge($files, $this->_loadDirs($target, $dirs));                    
+                }
 				return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
 			}
 			return array();
 		}
 		$this->_data[$ext][self::TARGETS][$target]['files'] = $files;
 	}
+    
+/**
+ * Load all assets from dirs recursive 
+ * 
+ * @param string $target The build with extension
+ * @param array $dirs Dirs
+ */
+    protected function _loadDirs($target, $dirs) {
+        $ext = $this->getExt($target);
+        $scanner = new AssetScanner(array(), $this->theme());
+        $dirFiles = $scanner->findAll($dirs, $ext);
+        return $dirFiles;
+    }
 
 /**
  * Get the extension for a filename.

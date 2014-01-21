@@ -116,7 +116,7 @@ class AssetScannerTest extends CakeTestCase {
 		$result = $scanner->find('plugin:TestAsset:plugin.css');
 		$this->assertEquals($expected, $result);
 	}
-
+    
 	public function testIsRemote() {
 		$paths = array(
 			$this->_testFiles . 'css' . DS
@@ -126,4 +126,39 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertFalse($scanner->isRemote('C:\\Project\\cakephp'));
 		$this->assertTrue($scanner->isRemote('http://example.com'));
 	}
+    
+    public function testFindAll() {      
+		$paths = array(
+			$this->_testFiles . 'js' . DS
+		);        
+        $scanner = new AssetScanner($paths);
+        $scanner->webroot = $this->_testFiles;
+        $result = $scanner->findAll(array('js/'), 'js');
+        $this->assertTrue(count($result) > 3);
+    }
+    
+    public function testFindAllTheme() {
+		App::build(array(
+			'View' => array($this->_testFiles . 'View' . DS)
+		));
+		$paths = array(
+			$this->_testFiles . 'js' . DS
+		);        
+        $scanner = new AssetScanner($paths, 'red');
+        $result = $scanner->findAll(array('theme:'), 'js');
+        $this->assertEqual(count($result), 2);
+    }
+    
+    public function testFindAllPlugin() {
+		App::build(array(
+			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestAsset');
+		$paths = array(
+			$this->_testFiles . 'js' . DS
+		);        
+        $scanner = new AssetScanner($paths);
+        $result = $scanner->findAll(array('p:TestAsset:js/'), 'js');
+        $this->assertEqual(count($result), 1);
+    }    
 }

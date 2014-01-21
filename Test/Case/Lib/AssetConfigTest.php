@@ -232,5 +232,4 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertInternalType('integer', $this->config->modifiedTime());
 		$this->assertEquals(filemtime($this->testConfig), $this->config->modifiedTime());
 	}
-
 }
