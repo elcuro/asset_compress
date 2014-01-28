@@ -410,7 +410,8 @@ class AssetConfig {
  */
     protected function _loadDirs($target, $dirs) {
         $ext = $this->getExt($target);
-        $scanner = new AssetScanner(array(), $this->theme());
+        $paths = isset($this->_data[$ext][self::TARGETS][$target]['paths']) ? $this->_data[$ext][self::TARGETS][$target]['paths'] : array();
+        $scanner = new AssetScanner($paths, $this->theme());
         $dirFiles = $scanner->findAll($dirs, $ext);
         return $dirFiles;
     }
