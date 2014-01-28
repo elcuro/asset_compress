@@ -144,9 +144,9 @@ class AssetScannerTest extends CakeTestCase {
 		$paths = array(
 			$this->_testFiles . 'css' . DS
 		);   
-        $scanner = new AssetScanner($paths, 'blue');
+        $scanner = new AssetScanner($paths, 'dirs');
         $result = $scanner->findAll(array('theme:'), 'css');
-        $this->assertEqual($result, array('t:theme.css'));
+        $this->assertEqual($result, array('t:css/theme.css', ));
     }
     
     public function testFindAllPlugin() {

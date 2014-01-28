@@ -160,7 +160,8 @@ class AssetScanner {
     }
     
 /**
- * Find files recursive
+ * Find files recursive and set relative path from
+ * webroot to file
  *
  * @param string $dir Dir to search files
  * @param string $ext Extension of files to find
@@ -172,7 +173,12 @@ class AssetScanner {
         $Folder = new Folder($dir);
         $paths = $Folder->findRecursive('.*\.' . $ext);
         foreach($paths as $path) {
-            $file = basename($path);
+            $exp = explode('webroot'.DS, $path);
+            if (isset($exp[1])) {
+                $file = str_replace(DS, '/', $exp[1]);
+            } else {
+                $file = basename($exp[0]);
+            }
             if (!in_array($file, $files)) {
                 $files[] = $prefix.$file;
             }
