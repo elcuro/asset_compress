@@ -326,6 +326,7 @@ class AssetCompressHelper extends AppHelper {
 	public function script($file, $options = array()) {
 		$file = $this->_addExt($file, '.js');
 		$config = $this->config();
+        $config->theme($this->theme);
 		$buildFiles = $config->files($file);
 		if (!$buildFiles) {
 			throw new RuntimeException('Cannot create a script tag for a build that does not exist.');
