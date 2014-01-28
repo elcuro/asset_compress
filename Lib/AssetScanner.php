@@ -147,13 +147,14 @@ class AssetScanner {
         $files = array();
         foreach ($dirs as $dir) {
             $dir = $this->_normalizePath($dir, DS);        
-            $resolved = $this->resolve($dir);
+            $prefix = $this->_filePrefix($dir);
+            $resolved = $this->resolve($dir);            
             if ($dir == $resolved) {
                 $dir = $this->webroot() . $dir;
             } else {
                 $dir = $resolved;
             }
-            $files = array_merge($files, $this->_findRecursive($dir, $ext));
+            $files = array_merge($files, $this->_findRecursive($dir, $ext, $prefix));
         }
         return $files;
     }
@@ -163,20 +164,40 @@ class AssetScanner {
  *
  * @param string $dir Dir to search files
  * @param string $ext Extension of files to find
+ * @param string $prefix Prefix for each file in this dir
  * @return array
  */
-	protected function _findRecursive($dir, $ext) {
+	protected function _findRecursive($dir, $ext, $prefix = '') {
         $files = array();
         $Folder = new Folder($dir);
         $paths = $Folder->findRecursive('.*\.' . $ext);
         foreach($paths as $path) {
             $file = basename($path);
             if (!in_array($file, $files)) {
-                $files[] = $file;
+                $files[] = $prefix.$file;
             }
         }
         return $files;
     }
+
+/**
+ * Get file prefix by dir path (t: or p:)
+ *
+ * @param string $path Dir path
+ * @return void
+ **/
+	public function _filePrefix($path) {
+		if (preg_match(self::PLUGIN_PATTERN, $path, $matches)) {
+			if (empty($matches[1]) || empty($matches[2])) {
+				throw new RuntimeException('Missing required parameters');
+			}			
+			return 'p:$matches[1]:';
+		}
+		if ($this->_theme && preg_match(self::THEME_PATTERN, $path)) {
+			return 't:';
+		}
+		return '';
+	}
 
 /**
  * Resolve a plugin or theme path into the file path without the search paths.
