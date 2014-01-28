@@ -235,7 +235,7 @@ class AssetScanner {
 		if ($full) {
 			return App::themePath($this->_theme) . 'webroot' . DS . $file;
 		}
-		return DS . 'theme' . DS . Inflector::underscore($this->_theme) . DS . $file;
+		return  '/theme/' . Inflector::underscore($this->_theme) . '/' . $file;
 	}
 
 /**
@@ -257,7 +257,7 @@ class AssetScanner {
 			$path = CakePlugin::path($matches[1]);
 			return $path . 'webroot' . DS . $matches[2];
 		}
-		return DS . Inflector::underscore($matches[1]) . DS . $matches[2];
+		return '/' . Inflector::underscore($matches[1]) . '/' . $matches[2];
 	}
 
 /**
