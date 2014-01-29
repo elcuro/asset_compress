@@ -389,7 +389,14 @@ class AssetConfig {
 	public function files($target, $files = null) {
 		$ext = $this->getExt($target);
 		if ($files === null) {
-			if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
+			if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) { 
+                if (isset($this->_data[$ext][self::TARGETS][$target]['dirs'])) {
+                    // attach dirs
+                    $dirs = $this->_data[$ext][self::TARGETS][$target]['dirs'];                    
+                    $files = $this->_data[$ext][self::TARGETS][$target]['files'];
+                    $this->_data[$ext][self::TARGETS][$target]['files'] = Set::merge($files, $this->_dirFiles($target, $dirs));    
+                    unset($this->_data[$ext][self::TARGETS][$target]['dirs']);
+                }                
 				return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
 			}
 			return array();
@@ -521,13 +528,6 @@ class AssetConfig {
 			$config['paths'] = array_map(array($this, '_replacePathConstants'), (array)$config['paths']);
 		}
 		$this->_data[$ext][self::TARGETS][$target] = $config;
-        
-        if (isset($this->_data[$ext][self::TARGETS][$target]['dirs'])) {
-            // attach dirs
-            $dirs = $this->_data[$ext][self::TARGETS][$target]['dirs'];                    
-            $files = $this->_data[$ext][self::TARGETS][$target]['files'];
-            $this->_data[$ext][self::TARGETS][$target]['files'] = Set::merge($files, $this->_dirFiles($target, $dirs));                    
-        }
 	}
 
 /**
