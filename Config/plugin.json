@@ -1,0 +1,14 @@
+{
+	"name": "AssetCompress",
+	"description": "Combine and compress assets from Mark Story modified for Croogo",
+
+	"author": "Mark Story",
+	"authorEmail": "mark@mark-story.com",
+	"authorUrl": "",
+
+	"dependencies": {
+		"plugins": [
+			"Extensions"
+		]
+	}
+}
