@@ -223,6 +223,7 @@ class AssetConfig {
 
 				// must be a build target.
 				$AssetConfig->addTarget($prefix . $key, $values);
+               
 			}
 		}
 	}
@@ -389,12 +390,6 @@ class AssetConfig {
 		$ext = $this->getExt($target);
 		if ($files === null) {
 			if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
-                if (isset($this->_data[$ext][self::TARGETS][$target]['dirs'])) {
-                    // attach dirs
-                    $dirs = $this->_data[$ext][self::TARGETS][$target]['dirs'];                    
-                    $files = $this->_data[$ext][self::TARGETS][$target]['files'];
-                    $this->_data[$ext][self::TARGETS][$target]['files'] = array_merge($files, $this->_loadDirs($target, $dirs));                    
-                }
 				return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
 			}
 			return array();
@@ -408,7 +403,7 @@ class AssetConfig {
  * @param string $target The build with extension
  * @param array $dirs Dirs
  */
-    protected function _loadDirs($target, $dirs) {
+    protected function _dirFiles($target, $dirs) {
         $ext = $this->getExt($target);
         $paths = isset($this->_data[$ext][self::TARGETS][$target]['paths']) ? $this->_data[$ext][self::TARGETS][$target]['paths'] : array();
         $scanner = new AssetScanner($paths, $this->theme());
@@ -526,6 +521,13 @@ class AssetConfig {
 			$config['paths'] = array_map(array($this, '_replacePathConstants'), (array)$config['paths']);
 		}
 		$this->_data[$ext][self::TARGETS][$target] = $config;
+        
+        if (isset($this->_data[$ext][self::TARGETS][$target]['dirs'])) {
+            // attach dirs
+            $dirs = $this->_data[$ext][self::TARGETS][$target]['dirs'];                    
+            $files = $this->_data[$ext][self::TARGETS][$target]['files'];
+            $this->_data[$ext][self::TARGETS][$target]['files'] = Set::merge($files, $this->_dirFiles($target, $dirs));                    
+        }
 	}
 
 /**
